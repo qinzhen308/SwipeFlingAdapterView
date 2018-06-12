@@ -3,6 +3,7 @@ package com.example.paulz.animdemo;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.paulz.animdemo.overlap.OverlapLinearLayoutManager;
 import com.example.paulz.animdemo.swipecard.SwipeFlingAdapterView;
 import com.example.paulz.animdemo.swipecard.UndoManager;
 
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     ImageView v;
     SwipeFlingAdapterView flingAdapterView;
-    private ArrayList<String> datas=new ArrayList<>();
+    private ArrayList<CardBean> datas=new ArrayList<>();
 
 
     @Override
@@ -29,16 +31,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         v=findViewById(R.id.image);
         flingAdapterView=findViewById(R.id.frame);
-        datas.add("第一个");
-        datas.add("第二个");
-        datas.add("第三个");
-        datas.add("第四个");
-        datas.add("第五个");
-        datas.add("第六个");
+        datas.add(new CardBean("第一个", OverlapLinearLayoutManager.OverlapMode.FIRST_BELOW_LAST));
+        datas.add(new CardBean("第二个", OverlapLinearLayoutManager.OverlapMode.FIRST_ABOVE_LAST));
+        datas.add(new CardBean("第三个", OverlapLinearLayoutManager.OverlapMode.MIDDLE_ABOVE_OTHERS_INCLINED_FRONT));
+        datas.add(new CardBean("第四个", OverlapLinearLayoutManager.OverlapMode.MIDDLE_ABOVE_OTHERS_INCLINED_BEHIND));
+        datas.add(new CardBean("第五个", OverlapLinearLayoutManager.OverlapMode.MIDDLE_BELOW_OTHERS_INCLINED_FRONT));
+        datas.add(new CardBean("第六个", OverlapLinearLayoutManager.OverlapMode.MIDDLE_BELOW_OTHERS_INCLINED_BEHIND));
         flingAdapterView.setUndoListener(new UndoManager.UndoLinstener() {
             @Override
             public void undo(Object data) {
-                datas.add(0,(String) data);
+                datas.add(0,(CardBean) data);
+            }
+
+            @Override
+            public void onStackChanged(int stackSize) {
+
             }
         });
         flingAdapterView.setAdapter(cardAdapter);
@@ -93,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static class ViewHolder{
         TextView textView;
+        RecyclerView recyclerview;
     }
 
     BaseAdapter cardAdapter=new BaseAdapter() {
@@ -118,14 +126,71 @@ public class MainActivity extends AppCompatActivity {
                 holder=new ViewHolder();
                 convertView= LayoutInflater.from(MainActivity.this).inflate(R.layout.item_card,parent,false);
                 holder.textView=convertView.findViewById(R.id.tv_page);
+                holder.recyclerview=convertView.findViewById(R.id.recyclerview);
                 convertView.setTag(holder);
             }else {
                 holder=(ViewHolder) convertView.getTag();
             }
-            holder.textView.setText(getItem(position).toString());
+
+            CardBean cardBean=(CardBean) getItem(position);
+
+            holder.recyclerview.setLayoutManager(
+                    new OverlapLinearLayoutManager(OverlapLinearLayoutManager.VERTICAL,
+                            cardBean.overlapMode));
+            holder.textView.setText(cardBean.title);
+            holder.recyclerview.setAdapter(overlapAdapter);
             return convertView;
         }
     };
 
+
+    RecyclerView.Adapter overlapAdapter=new RecyclerView.Adapter<CircleViewHolder>() {
+        @Override
+        public int getItemCount() {
+            return 6;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public void onBindViewHolder(CircleViewHolder holder, int position) {
+            if(position==1){
+                holder.imageView2.setVisibility(View.VISIBLE);
+            }else {
+                holder.imageView2.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public CircleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v= LayoutInflater.from(MainActivity.this).inflate(R.layout.item_circle,parent,false);
+            return new CircleViewHolder(v);
+        }
+
+    };
+
+
+    public static class CircleViewHolder extends RecyclerView.ViewHolder{
+        ImageView imageView;
+        ImageView imageView2;
+
+        public CircleViewHolder(View itemView) {
+            super(itemView);
+            imageView=itemView.findViewById(R.id.image);
+            imageView2=itemView.findViewById(R.id.image2);
+        }
+    }
+
+    public static class CardBean{
+        String title;
+        OverlapLinearLayoutManager.OverlapMode overlapMode;
+        public CardBean(String title,OverlapLinearLayoutManager.OverlapMode overlapMode){
+            this.title=title;
+            this.overlapMode=overlapMode;
+        }
+    }
 
 }
