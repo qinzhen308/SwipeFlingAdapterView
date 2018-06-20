@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,10 +134,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             CardBean cardBean=(CardBean) getItem(position);
-
-            holder.recyclerview.setLayoutManager(
-                    new OverlapLinearLayoutManager(OverlapLinearLayoutManager.VERTICAL,
-                            cardBean.overlapMode));
+            OverlapLinearLayoutManager manager=new OverlapLinearLayoutManager(OverlapLinearLayoutManager.VERTICAL,
+                    cardBean.overlapMode);
+            manager.setGravity(Gravity.TOP);
+            holder.recyclerview.setLayoutManager(manager);
             holder.textView.setText(cardBean.title);
             holder.recyclerview.setAdapter(overlapAdapter);
             return convertView;
