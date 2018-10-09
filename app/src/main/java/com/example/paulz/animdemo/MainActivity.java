@@ -1,6 +1,7 @@
 package com.example.paulz.animdemo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -85,6 +86,14 @@ public class MainActivity extends AppCompatActivity {
                 flingAdapterView.undo();
             }
         });
+        flingAdapterView.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClicked(int itemPosition, Object dataObject) {
+                if(itemPosition==0){
+                    startActivity(new Intent(MainActivity.this ,AudioTrackActivity.class));
+                }
+            }
+        });
     }
 
     /**
@@ -121,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder=null;
             if(convertView==null){
                 holder=new ViewHolder();
