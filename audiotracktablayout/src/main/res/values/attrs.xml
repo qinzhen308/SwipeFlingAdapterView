@@ -23,9 +23,17 @@
         <attr name="pstsShouldExpand" format="boolean" />
         <attr name="pstsTextAllCaps" format="boolean" />
         <attr name="pstsTextSelectedColor" format="color" />
+        <attr name="pstsTextColor" format="color" />
+        <attr name="pstsTextSize" format="dimension" />
         <!--缩放的最大值,0.3表示放大后最大是原来的0.3倍,默认未0.3-->
         <attr name="pstsScaleZoomMax" format="float" />
         <attr name="pstsSmoothScrollWhenClickTab" format="boolean" />
+
+        <attr name="backgroundPaddingTop" format="dimension" />
+        <attr name="backgroundPaddingBottom" format="dimension" />
+        <attr name="backgroundPaddingLeft" format="dimension" />
+        <attr name="backgroundPaddingRight" format="dimension" />
+        <attr name="waveWidth" format="dimension" />
 
         <attr name="pstsTabTextGravity">
             <!-- Push object to the top of its container, not changing its size. -->

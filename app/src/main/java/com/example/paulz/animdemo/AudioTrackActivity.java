@@ -69,35 +69,9 @@ public class AudioTrackActivity extends AppCompatActivity {
             }
         });
         tabBar.setViewPager(viewPager);
-        setTabsValue();
+//        setTabsValue();
     }
 
 
-    private void setTabsValue() {
-        // 设置Tab是自动填充满屏幕的
-        tabBar.setShouldExpand(false);
 
-        // 设置Tab的分割线的颜色
-        // tabBar.setDividerColor(getResources().getColor(R.color.color_80cbc4));
-        // 设置分割线的上下的间距,传入的是dp
-        tabBar.setDividerPaddingTopBottom(12);
-
-        // 设置Tab底部线的高度,传入的是dp
-        tabBar.setUnderlineHeight(0);
-        //设置Tab底部线的颜色
-        tabBar.setUnderlineColor(Color.GREEN);
-
-        // 设置Tab 指示器Indicator的高度,传入的是dp
-        tabBar.setIndicatorHeight(10);
-        tabBar.setTabPaddingLeftRight(10);
-        // 设置Tab Indicator的颜色
-        tabBar.setIndicatorColorResource(R.color.colorAccent);
-
-        // 设置Tab标题文字的大小,传入的是dp
-        tabBar.setTextSize(16);
-        // 设置选中Tab文字的颜色
-        tabBar.setSelectedTextColorResource(R.color.colorAccent);
-        //设置正常Tab文字的颜色
-        tabBar.setTextColorResource(R.color.colorPrimaryDark);
-    }
 }
