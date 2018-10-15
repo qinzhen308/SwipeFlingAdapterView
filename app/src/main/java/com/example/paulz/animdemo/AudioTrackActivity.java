@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.paulz.audiotrack.AudioTrackTabLayout;
+import com.paulz.audiotrack.ViewPagerInTabLayoutProxy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class AudioTrackActivity extends AppCompatActivity {
                 container.removeView(views.get(position));
             }
         });
-        tabBar.setViewPager(viewPager);
+        tabBar.setViewPager(new ViewPagerInTabLayoutProxy(viewPager));
 //        setTabsValue();
     }
 

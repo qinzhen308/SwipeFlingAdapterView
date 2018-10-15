@@ -55,7 +55,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
     public OnPageChangeListener delegatePageListener;
 
     private LinearLayout tabsContainer;
-    private ViewPager pager;
+    private IPagerInTabLayoutProxy pager;
 
     private int tabCount;
 
@@ -245,7 +245,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
      *
      * @param pager pager
      */
-    public void setViewPager(ViewPager pager) {
+    public void setViewPager(IPagerInTabLayoutProxy pager) {
         this.pager = pager;
         if (this.pager.getAdapter() == null) {
             throw new IllegalStateException("ViewPager does not have adapter instance.");
@@ -457,7 +457,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
                     + (1f - currentPositionOffset) * lineRight);
 
             setTabScale(nextTab,nextScale);
-            ViewHelper.setTranslationX(nextTab,nextTab.getWidth()*zoomMax*(1-currentPositionOffset));
+            ViewHelper.setTranslationX(nextTab,(nextTab.getWidth()-tabPadding)*zoomMax*(1-currentPositionOffset));
 
         }
 
@@ -491,7 +491,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
             }else if(i==currentPosition+1){
                 matrix.reset();
                 matrix.postScale(nextScale,nextScale,rect.left,rect.centerY());
-                matrix.postTranslate(tab.getMeasuredWidth()*zoomMax*(1-currentPositionOffset),0);
+                matrix.postTranslate((tab.getMeasuredWidth()-tabPadding)*zoomMax*(1-currentPositionOffset),0);
                 matrix.mapRect(rect);
             }else if(i>currentPosition+1){
                 matrix.reset();
@@ -632,7 +632,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
                 scale= 1 + zoomMax;
             }
             if(i>selectedPosition){
-                ViewHelper.setTranslationX(v,v.getWidth()*zoomMax);
+                ViewHelper.setTranslationX(v,(v.getWidth()-tabPadding)*zoomMax);
             }else {
                 ViewHelper.setTranslationX(v,0);
             }
