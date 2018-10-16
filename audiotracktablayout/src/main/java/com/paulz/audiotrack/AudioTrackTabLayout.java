@@ -457,7 +457,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
                     + (1f - currentPositionOffset) * lineRight);
 
             setTabScale(nextTab,nextScale);
-            ViewHelper.setTranslationX(nextTab,(nextTab.getWidth()-tabPadding)*zoomMax*(1-currentPositionOffset));
+            ViewHelper.setTranslationX(nextTab,(nextTab.getWidth()-2*tabPadding)*zoomMax*(1-currentPositionOffset));
 
         }
 
@@ -491,11 +491,11 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
             }else if(i==currentPosition+1){
                 matrix.reset();
                 matrix.postScale(nextScale,nextScale,rect.left,rect.centerY());
-                matrix.postTranslate((tab.getMeasuredWidth()-tabPadding)*zoomMax*(1-currentPositionOffset),0);
+                matrix.postTranslate((tab.getWidth()-2*tabPadding)*zoomMax*(1-currentPositionOffset),0);
                 matrix.mapRect(rect);
             }else if(i>currentPosition+1){
                 matrix.reset();
-                matrix.postTranslate(tab.getMeasuredWidth()*zoomMax,0);
+                matrix.postTranslate((tab.getWidth()-2*tabPadding)*zoomMax,0);
                 matrix.mapRect(rect);
             }
             rects.add(rect);
@@ -632,7 +632,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
                 scale= 1 + zoomMax;
             }
             if(i>selectedPosition){
-                ViewHelper.setTranslationX(v,(v.getWidth()-tabPadding)*zoomMax);
+                ViewHelper.setTranslationX(v,(v.getWidth()-2*tabPadding)*zoomMax);
             }else {
                 ViewHelper.setTranslationX(v,0);
             }
