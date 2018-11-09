@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -240,6 +242,34 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
         audioTrack.setWaveWidth(waveWidth);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int modeW=MeasureSpec.getMode(widthMeasureSpec);
+        int width=MeasureSpec.getSize(widthMeasureSpec);
+        if(modeW!=MeasureSpec.EXACTLY&&getLayoutParams().width== ViewGroup.LayoutParams.WRAP_CONTENT){
+            int maxChildWidth=0;
+            int childWidth=0;
+            View child=null;
+            int childrenWidth=0;
+            for(int i=0;i<tabsContainer.getChildCount();i++){
+                child=tabsContainer.getChildAt(i);
+                childWidth=child.getMeasuredWidth();
+                if(childWidth>maxChildWidth){
+                    maxChildWidth=childWidth;
+                }
+                LinearLayout.LayoutParams lp=(LinearLayout.LayoutParams)child.getLayoutParams();
+                childrenWidth+=lp.leftMargin+lp.rightMargin+childWidth;
+            }
+            int finalWidth=(int)(childrenWidth+maxChildWidth*zoomMax);
+            if(tabsContainer.getMinimumWidth()!=finalWidth){
+                tabsContainer.setMinimumWidth(finalWidth);
+            }
+            setMeasuredDimension(Math.min(width,finalWidth+getPaddingLeft()+getPaddingRight()),getMeasuredHeight());
+        }
+    }
+
     /****
      * 关联ViewPager
      *
@@ -442,6 +472,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
         float nextScale=1;
         curScale=1+zoomMax*(1-currentPositionOffset);
         nextScale=1+zoomMax*currentPositionOffset;
+        float transXAfterNextTab=(curScale-1)*(currentTab.getWidth()-2*tabPadding);
 
         // if there is an offset, start interpolating left and right coordinates between current and next tab
 
@@ -456,33 +487,27 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
             lineRight = (currentPositionOffset * nextTabRight
                     + (1f - currentPositionOffset) * lineRight);
 
+
             setTabScale(nextTab,nextScale);
-            ViewHelper.setTranslationX(nextTab,(nextTab.getWidth()-2*tabPadding)*zoomMax*(1-currentPositionOffset));
-
+            float nextTransX=(currentTab.getWidth()-2*tabPadding)*zoomMax*(1-currentPositionOffset);
+            ViewHelper.setTranslationX(nextTab,nextTransX);
+            transXAfterNextTab=(nextScale-1)*(nextTab.getWidth()-2*tabPadding)+(curScale-1)*(currentTab.getWidth()-2*tabPadding);
+            for(int i=currentPosition+2;i<tabsContainer.getChildCount();i++){
+                View v=tabsContainer.getChildAt(i);
+                ViewHelper.setTranslationX(v,transXAfterNextTab);
+            }
         }
-
         setTabScale(currentTab,curScale);
 
-
         ArrayList<RectF> rects=new ArrayList<>();
-        RectF indicatorRect=new RectF(lineLeft,bottom-indicatorHeight,lineRight, bottom);
         Matrix matrix=new Matrix();
-        matrix.postScale(curScale,curScale,indicatorRect.left,indicatorRect.centerY());
-        matrix.mapRect(indicatorRect);
         for(int i=0;i<tabsContainer.getChildCount();i++){
-//            if(i==currentPosition){
-//                rects.add(indicatorRect);
-//                continue;
-//            }
+
             View tab = tabsContainer.getChildAt(i);
             lineLeft = computeLeft(tab);
             lineRight = computeRight(tab);
             RectF rect=new RectF(lineLeft,bottom-indicatorHeight,lineRight, bottom);
-//            if(i>selectedPosition){
-//                matrix.reset();
-//                matrix.postTranslate(tab.getMeasuredWidth()*zoomMax,0);
-//                matrix.mapRect(rect);
-//            }
+
             if(i==currentPosition){
                 matrix.reset();
                 matrix.postScale(curScale,curScale,rect.left,rect.centerY());
@@ -491,11 +516,11 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
             }else if(i==currentPosition+1){
                 matrix.reset();
                 matrix.postScale(nextScale,nextScale,rect.left,rect.centerY());
-                matrix.postTranslate((tab.getWidth()-2*tabPadding)*zoomMax*(1-currentPositionOffset),0);
+                matrix.postTranslate((currentTab.getWidth()-2*tabPadding)*zoomMax*(1-currentPositionOffset),0);
                 matrix.mapRect(rect);
             }else if(i>currentPosition+1){
                 matrix.reset();
-                matrix.postTranslate((tab.getWidth()-2*tabPadding)*zoomMax,0);
+                matrix.postTranslate(transXAfterNextTab,0);
                 matrix.mapRect(rect);
             }
             rects.add(rect);
@@ -524,7 +549,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
 
     private int computeRight(View tab) {
         if (indicatorMode == INDICATOR_MODE_SPECIFY_LENGTH) {
-            return tab.getLeft() + (tab.getWidth() + indicatorLength) / 2+getPaddingLeft();
+            return tab.getRight() - (tab.getWidth() - indicatorLength) / 2+getPaddingLeft();
         } else if (indicatorMode == INDICATOR_MODE_ALIGN_TEXT) {
             return tab.getRight()+getPaddingLeft();
         } else {
@@ -625,6 +650,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
     }
 
     private void ajustIndicatorState(){
+        int preTabWidth=tabsContainer.getChildAt(selectedPosition).getWidth();
         for(int i=0;i<tabsContainer.getChildCount();i++){
             View v=tabsContainer.getChildAt(i);
             float scale=1;
@@ -632,7 +658,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
                 scale= 1 + zoomMax;
             }
             if(i>selectedPosition){
-                ViewHelper.setTranslationX(v,(v.getWidth()-2*tabPadding)*zoomMax);
+                ViewHelper.setTranslationX(v,(preTabWidth-2*tabPadding)*zoomMax);
             }else {
                 ViewHelper.setTranslationX(v,0);
             }

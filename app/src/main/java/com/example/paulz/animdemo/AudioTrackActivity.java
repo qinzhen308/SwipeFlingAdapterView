@@ -25,7 +25,7 @@ import java.util.List;
 public class AudioTrackActivity extends AppCompatActivity {
     AudioTrackTabLayout tabBar;
     ViewPager viewPager;
-    String[] titles={"关注","推荐","附近","视频"};
+    String[] titles={"关注123123123123","推荐哈sss","附近2111222","视频1312312313"};
     List<View> views=new ArrayList<>();
 
     @Override

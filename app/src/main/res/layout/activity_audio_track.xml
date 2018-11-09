@@ -6,12 +6,14 @@
     android:background="@color/colorPrimaryDark"
     android:layout_height="match_parent">
 
+
+
     <com.paulz.audiotrack.AudioTrackTabLayout
         android:id="@+id/tab_bar"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_height="64dp"
         android:background="#ffffff"
-        android:paddingLeft="30dp"
         app:pstsScaleZoomMax="1"
         app:backgroundPaddingBottom="8dp"
         app:pstsTabTextGravity="bottom|center_horizontal"
