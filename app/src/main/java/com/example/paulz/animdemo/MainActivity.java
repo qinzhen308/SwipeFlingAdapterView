@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
                 if(itemPosition==0){
-                    startActivity(new Intent(MainActivity.this ,AudioTrackActivity.class));
+                    startActivity(new Intent(MainActivity.this ,CenterGridViewActivity.class));
                 }
             }
         });
