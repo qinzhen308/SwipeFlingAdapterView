@@ -40,7 +40,6 @@ public class CenterGridView extends ConstraintLayout {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width=View.MeasureSpec.getSize(widthMeasureSpec);
@@ -61,7 +60,6 @@ public class CenterGridView extends ConstraintLayout {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     void populate(){
         if(adapter==null){
             removeAllViews();
@@ -82,14 +80,18 @@ public class CenterGridView extends ConstraintLayout {
         requestLayout();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+
     void populate(View view, int position, int count,boolean needAdd){
         view.setId(View.generateViewId());
-        LayoutParams destLp=createLayoutParamter();
-        /*ViewGroup.LayoutParams lp=view.getLayoutParams();
-        if(lp instanceof RelativeLayout.LayoutParams){
-            RelativeLayout.LayoutParams relp=(RelativeLayout.LayoutParams)lp;
-        }*/
+        LayoutParams destLp=null;
+        if(needAdd){
+            destLp=createLayoutParamter();
+        }else {
+            destLp=(LayoutParams)view.getLayoutParams();
+            destLp.width=childWidth;
+        }
+
+
         //row [0,position/columnNum]
         int row=position/columnNum;
         //column [0,columnNum-1]
@@ -139,7 +141,6 @@ public class CenterGridView extends ConstraintLayout {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void setAdapter(BaseAdapter adapter){
         this.adapter=adapter;
         populate();
