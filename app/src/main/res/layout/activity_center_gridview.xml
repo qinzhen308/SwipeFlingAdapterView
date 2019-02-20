@@ -5,145 +5,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <com.example.paulz.animdemo.centergridview.CenterGridView
-        android:id="@+id/center_grid"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="70dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:cgv_columnNum="4"
-        app:cgv_horizontalSpace="0dp"
-        app:cgv_verticalSpace="0dp"
-        android:visibility="visible"
-        />
-
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="70dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <include
-            android:id="@+id/m1"
-            android:layout_width="70dp"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            layout="@layout/item_center_grid"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/m2"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            />
+            >
 
-        <include
-            android:id="@+id/m2"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            layout="@layout/item_center_grid"
-            app:layout_constraintLeft_toRightOf="@+id/m1"
-            app:layout_constraintRight_toLeftOf="@+id/m3"
-            app:layout_constraintTop_toTopOf="@+id/m1"
-            />
+            <com.example.paulz.animdemo.centergridview.CenterGridView2
+                android:id="@+id/center_grid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="70dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:cgv_columnNum="6"
+                app:cgv_horizontalSpace="20dp"
+                app:cgv_verticalSpace="20dp"
+                android:visibility="visible"
+                />
 
-        <include
-            android:id="@+id/m3"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            layout="@layout/item_center_grid"
-            app:layout_constraintLeft_toRightOf="@+id/m2"
-            app:layout_constraintRight_toLeftOf="@+id/m4"
-            app:layout_constraintTop_toTopOf="@+id/m1"
+        </android.support.constraint.ConstraintLayout>
 
-            />
-
-        <include
-            android:id="@+id/m4"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            layout="@layout/item_center_grid"
-            app:layout_constraintLeft_toRightOf="@+id/m3"
-            app:layout_constraintRight_toLeftOf="@+id/m5"
-            app:layout_constraintTop_toTopOf="@+id/m1"
-            />
-
-        <include
-            android:id="@+id/m5"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            layout="@layout/item_center_grid"
-            app:layout_constraintLeft_toRightOf="@+id/m4"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/m1"
-            />
-
-
-        <!-- row2-->
-
-
-        <include
-            android:id="@+id/n1"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            layout="@layout/item_center_grid"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/m1"
-            app:layout_constraintRight_toLeftOf="@+id/n2"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            />
-
-        <include
-            android:id="@+id/n2"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            layout="@layout/item_center_grid"
-            app:layout_constraintLeft_toRightOf="@+id/n1"
-            app:layout_constraintRight_toLeftOf="@+id/n3"
-            app:layout_constraintTop_toTopOf="@+id/n1"
-            />
-
-        <include
-            android:id="@+id/n3"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            layout="@layout/item_center_grid"
-            app:layout_constraintLeft_toRightOf="@+id/n2"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/n1"
-
-            />
-
-        <!--<include-->
-            <!--android:id="@+id/n4"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--layout="@layout/item_center_grid"-->
-            <!--app:layout_constraintLeft_toRightOf="@+id/n3"-->
-            <!--app:layout_constraintRight_toLeftOf="@+id/n5"-->
-            <!--app:layout_constraintTop_toTopOf="@+id/n1"-->
-            <!--/>-->
-
-        <!--<include-->
-            <!--android:id="@+id/n5"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--layout="@layout/item_center_grid"-->
-            <!--app:layout_constraintLeft_toRightOf="@+id/n4"-->
-            <!--app:layout_constraintRight_toRightOf="parent"-->
-            <!--app:layout_constraintTop_toTopOf="@+id/n1"-->
-            <!--/>-->
-
-    </android.support.constraint.ConstraintLayout>
-
+    </ScrollView>
 
 
 
