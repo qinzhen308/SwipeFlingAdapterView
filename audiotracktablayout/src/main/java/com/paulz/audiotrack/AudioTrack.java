@@ -20,7 +20,7 @@ import java.util.TimerTask;
  * Description:
  */
 
-public class AudioTrack {
+public class AudioTrack implements IIndicator{
     ArrayList<PointF> wavePoints=new ArrayList<>();
 
     Paint paint;
@@ -58,7 +58,7 @@ public class AudioTrack {
 
     }
 
-    public void setWaveWidth(float width){
+    public void setLineWidth(float width){
         waveWidth=width;
         paint.setStrokeWidth(waveWidth);
     }

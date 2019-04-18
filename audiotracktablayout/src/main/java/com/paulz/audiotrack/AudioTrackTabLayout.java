@@ -7,12 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
@@ -38,6 +39,11 @@ import java.util.Locale;
 import java.util.Map;
 
 
+/**
+ * Created by Paul Z on 2018/10/9.
+ * Description:
+ * 仿虾米音乐首页
+ */
 public class AudioTrackTabLayout extends HorizontalScrollView {
 
     public interface IconTabProvider {
@@ -120,14 +126,20 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
 
     private int oldPage;
 
+    private int indicatorCategory = INDICATOR_CATEGORY_WAVE;
     private int indicatorMode = INDICATOR_MODE_ALIGN_TAB;
     private int indicatorLength = 18;
     public final static int INDICATOR_MODE_ALIGN_TAB = 0;
     public final static int INDICATOR_MODE_ALIGN_TEXT = 1;
     public final static int INDICATOR_MODE_SPECIFY_LENGTH = 2;
+    public final static int INDICATOR_CATEGORY_WAVE = 0;
+    public final static int INDICATOR_CATEGORY_LINE = 1;
 
     private int waveWidth=2;
-    AudioTrack audioTrack;
+    IIndicator[] mIndicators;
+    private Drawable mBackground;
+
+    private HashMap<Integer,RightIndicator> mRightIndicator=new HashMap<>();
 
 
     public AudioTrackTabLayout(Context context) {
@@ -185,6 +197,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
                 R.styleable.PagerSlidingTabStrip_pstsIndicatorHeight, indicatorHeight);
         indicatorLength = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsIndicatorLength, indicatorLength);
         indicatorMode = a.getInt(R.styleable.PagerSlidingTabStrip_pstsIndicatorMode, indicatorMode);
+        indicatorCategory = a.getInt(R.styleable.PagerSlidingTabStrip_pstsIndicatorCategory, INDICATOR_CATEGORY_WAVE);
         underlineHeight = a.getDimensionPixelSize(
                 R.styleable.PagerSlidingTabStrip_pstsUnderlineHeight, underlineHeight);
         pstsIndicatorRoundDegree = a.getDimensionPixelSize(R.styleable.PagerSlidingTabStrip_pstsIndicatorRoundDegree, pstsIndicatorRoundDegree);
@@ -238,36 +251,51 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
         }
         pageListener = new PageListener();
 
-        audioTrack=new AudioTrack();
-        audioTrack.setWaveWidth(waveWidth);
+
+        initIndicators();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void initIndicators(){
+        AudioTrack audioTrack=new AudioTrack();
+        LineIndicator lineIndicator=new LineIndicator();
+        mIndicators =new IIndicator[]{audioTrack,lineIndicator};
+        setLineWidth(waveWidth);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int modeW=MeasureSpec.getMode(widthMeasureSpec);
         int width=MeasureSpec.getSize(widthMeasureSpec);
-        if(modeW!=MeasureSpec.EXACTLY&&getLayoutParams().width== ViewGroup.LayoutParams.WRAP_CONTENT){
-            int maxChildWidth=0;
-            int childWidth=0;
-            View child=null;
-            int childrenWidth=0;
-            for(int i=0;i<tabsContainer.getChildCount();i++){
-                child=tabsContainer.getChildAt(i);
-                childWidth=child.getMeasuredWidth();
-                if(childWidth>maxChildWidth){
-                    maxChildWidth=childWidth;
-                }
-                LinearLayout.LayoutParams lp=(LinearLayout.LayoutParams)child.getLayoutParams();
-                childrenWidth+=lp.leftMargin+lp.rightMargin+childWidth;
-            }
-            int finalWidth=(int)(childrenWidth+maxChildWidth*zoomMax);
-            if(tabsContainer.getMinimumWidth()!=finalWidth){
-                tabsContainer.setMinimumWidth(finalWidth);
-            }
+        int finalWidth=measureContainer();
+        if(getLayoutParams().width== ViewGroup.LayoutParams.WRAP_CONTENT){
             setMeasuredDimension(Math.min(width,finalWidth+getPaddingLeft()+getPaddingRight()),getMeasuredHeight());
+        }else if(getLayoutParams().width== ViewGroup.LayoutParams.MATCH_PARENT){
+            setMeasuredDimension(width,getMeasuredHeight());
+        }else {
+            setMeasuredDimension(getLayoutParams().width,getMeasuredHeight());
         }
+    }
+
+    private int measureContainer(){
+        int maxChildWidth=0;
+        int childWidth=0;
+        View child=null;
+        int childrenWidth=0;
+        for(int i=0;i<tabsContainer.getChildCount();i++){
+            child=tabsContainer.getChildAt(i);
+            childWidth=child.getMeasuredWidth();
+            if(childWidth>maxChildWidth){
+                maxChildWidth=childWidth;
+            }
+            LinearLayout.LayoutParams lp=(LinearLayout.LayoutParams)child.getLayoutParams();
+            childrenWidth+=lp.leftMargin+lp.rightMargin+childWidth;
+        }
+        int finalWidth=(int)(childrenWidth+maxChildWidth*zoomMax);
+        if(tabsContainer.getMinimumWidth()!=finalWidth){
+            tabsContainer.setMinimumWidth(finalWidth);
+        }
+        return finalWidth;
     }
 
     /****
@@ -359,6 +387,12 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
         framelayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(position==selectedPosition){
+                    RightIndicator rightIndicator=mRightIndicator.get(position);
+                    if(rightIndicator!=null&&rightIndicator.OnTabExcessClick()){
+                        return;
+                    }
+                }
                 mFadeEnabled = false;//点击时没有文字颜色渐变效果
                 pager.setCurrentItem(position, smoothScrollWhenClickTab);
 //                currentPosition = position;
@@ -446,9 +480,43 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
     }
 
     @Override
+    public void setBackground(Drawable background) {
+        setBackgroundDrawable(background);
+    }
+
+    @Override
+    public void setBackgroundDrawable(Drawable background) {
+        super.setBackgroundDrawable(background);
+        mBackground=getBackground();
+        if(mBackground!=null){
+            super.setBackgroundDrawable(null);
+        }
+    }
+
+
+    private void drawBackground(Canvas canvas) {
+        final Drawable background = mBackground;
+        if (background == null) {
+            return;
+        }
+
+        background.setBounds(backgroundPaddingLeft,backgroundPaddingTop,getWidth()-backgroundPaddingRight,getHeight()-backgroundPaddingBottom);
+
+        final int scrollX = getScrollX();
+        final int scrollY = getScrollY();
+        if ((scrollX | scrollY) == 0) {
+            background.draw(canvas);
+        } else {
+            canvas.translate(scrollX, scrollY);
+            background.draw(canvas);
+            canvas.translate(-scrollX, -scrollY);
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
-        getBackground().setBounds(backgroundPaddingLeft,backgroundPaddingTop,getWidth()-backgroundPaddingRight,getHeight()-backgroundPaddingBottom);
         super.onDraw(canvas);
+        drawBackground(canvas);
         Log.d("paulz","onDraw   currentPosition="+currentPosition);
 
         if (isInEditMode() || tabCount == 0) {
@@ -525,9 +593,16 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
             }
             rects.add(rect);
         }
-        audioTrack.drawSelf(this,canvas,indicatorColor,rects,currentPosition);
+        mIndicators[indicatorCategory].drawSelf(tabsContainer.getWidth()>getWidth()?tabsContainer:this,canvas,indicatorColor,rects,currentPosition);
 
+        drawRightIndicator(canvas);
 
+    }
+
+    private void drawRightIndicator(Canvas canvas){
+        RightIndicator indicator=mRightIndicator.get(selectedPosition);
+        if(indicator==null)return;
+        indicator.drawSelf(canvas,tabsContainer,zoomMax,tabTextSize,tabPadding,selectedTabTextColor);
     }
 
     private void setTabScale(View tab,float scale){
@@ -563,7 +638,7 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
 
     private FragmentPageSelectListener mListener;
 
-    private class PageListener implements OnPageChangeListener {
+    private class PageListener implements OnPageChangeListener ,NoPreloadViewPager.OnPageChangeListener{
         private int oldPosition = 0;
 
         @Override
@@ -617,9 +692,9 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
                 scrollToChild(pager.getCurrentItem(), 0);
                 mFadeEnabled = true;
                 ajustIndicatorState();
-                audioTrack.doWave(AudioTrackTabLayout.this);
+                mIndicators[indicatorCategory].doWave(AudioTrackTabLayout.this);
             }else {
-                audioTrack.stopWave();
+                mIndicators[indicatorCategory].stopWave();
             }
             if (delegatePageListener != null) {
                 delegatePageListener.onPageScrollStateChanged(state);
@@ -664,7 +739,9 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
             }
             setTabScale(v,scale);
         }
+
     }
+
 
     public void setIndicatorColor(int indicatorColor) {
         this.indicatorColor = indicatorColor;
@@ -908,9 +985,11 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
         this.indicatorLength = indicatorLength;
     }
 
-    public void setWaveWidth(int waveWidth) {
+    public void setLineWidth(int waveWidth) {
         this.waveWidth = waveWidth;
-        audioTrack.setWaveWidth(waveWidth);
+        for(IIndicator indicator:mIndicators){
+            indicator.setLineWidth(waveWidth);
+        }
     }
 
     private boolean isSmall(float positionOffset) {
@@ -943,7 +1022,23 @@ public class AudioTrackTabLayout extends HorizontalScrollView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (null != pageListener && this.pager != null)
-            this.pager.removeOnPageChangeListener(pageListener);
+        mIndicators[indicatorCategory].stopWave();
+//        if (null != pageListener && this.pager != null)
+//            this.pager.removeOnPageChangeListener(pageListener);
+    }
+
+    public void addRightIndicator(RightIndicator rightIndicator){
+        mRightIndicator.put(rightIndicator.getPosition(),rightIndicator);
+    }
+    public void removeRightIndicator(RightIndicator rightIndicator){
+        mRightIndicator.remove(rightIndicator.getPosition());
+    }
+
+    public void removeRightIndicator(int position){
+        mRightIndicator.remove(position);
+    }
+
+    public void clearRightIndicator(){
+        mRightIndicator.clear();
     }
 }

@@ -12,6 +12,11 @@
             <enum name="indicator_mode_align_text" value="1" />
             <enum name="indicator_mode_specify_length" value="2" />
         </attr>
+        <attr name="pstsIndicatorCategory" format="integer">
+            <enum name="indicator_category_wave" value="0" />
+            <enum name="indicator_category_line" value="1" />
+        </attr>
+
         <!--下方的导航按钮的圆角大小-->
         <attr name="pstsIndicatorRoundDegree" format="dimension" />
         <attr name="pstsUnderlineHeight" format="dimension" />

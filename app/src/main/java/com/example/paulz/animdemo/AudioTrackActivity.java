@@ -10,12 +10,15 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.paulz.audiotrack.AudioTrackTabLayout;
+import com.paulz.audiotrack.RightIndicator;
 import com.paulz.audiotrack.ViewPagerInTabLayoutProxy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Paul Z on 2018/10/9.
@@ -25,7 +28,9 @@ import java.util.List;
 public class AudioTrackActivity extends AppCompatActivity {
     AudioTrackTabLayout tabBar;
     ViewPager viewPager;
-    String[] titles={"关注123123123123","推荐哈sss","附近2111222","视频1312312313"};
+//    String[] titles={"关注123123123123","推荐哈sss","附近2111222","视频1312312313","tab5","tab6","tab7","tab8","tab9","tab10","tab11"};
+//    String[] titles={"关注","推荐哈","附近","视频","视频","视频","视频","视频","视频","视频","视频","视频","视频","视频","视频","视频end"};
+    String[] titles={"关注","推荐哈","附近","视频","视频"};
     List<View> views=new ArrayList<>();
 
     @Override
@@ -70,6 +75,15 @@ public class AudioTrackActivity extends AppCompatActivity {
             }
         });
         tabBar.setViewPager(new ViewPagerInTabLayoutProxy(viewPager));
+        tabBar.addRightIndicator(new RightIndicator(0) {
+            @Override
+            public boolean OnTabExcessClick() {
+                Toast.makeText(getApplicationContext(),"哈哈哈",Toast.LENGTH_LONG).show();
+                titles[0]="关注"+(int)(Math.random()*100);
+                viewPager.getAdapter().notifyDataSetChanged();
+                return false;
+            }
+        });
 //        setTabsValue();
     }
 
