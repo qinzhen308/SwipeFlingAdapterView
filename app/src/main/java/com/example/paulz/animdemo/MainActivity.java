@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 CustomToast.showToast(MainActivity.this,"测试一下自定义Toast阿红了付款哈伦裤凤凰拉客户付款拉伤了开发了哈",0);
                 if(itemPosition==0){
 //                    startActivity(new Intent(MainActivity.this ,CenterGridViewActivity.class));
-                    startActivity(new Intent(MainActivity.this ,AudioTrackActivity.class));
+                    startActivity(new Intent(MainActivity.this ,SpanActivity.class));
                 }
             }
         });
