@@ -50,7 +50,9 @@ public class MiddleImageSpan extends ImageSpan{
         Drawable b = getDrawable();
         canvas.save();
         int transY = 0;
-        transY = ((bottom-top) - b.getBounds().bottom)/2+top;
+//        transY = ((bottom-top) - b.getBounds().bottom)/2+top;
+        int fixed=(int)(paint.getTextSize()/8);
+        transY = ((y-top) - b.getBounds().bottom)/2+top+fixed;
         canvas.translate(x, transY);
         b.draw(canvas);
         canvas.restore();

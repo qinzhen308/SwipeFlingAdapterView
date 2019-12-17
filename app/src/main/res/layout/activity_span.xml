@@ -1,13 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
+    <EditText
         android:id="@+id/textview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
         android:textSize="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
+
+    <EditText
+        android:id="@+id/edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="100dp"
+        android:layout_marginTop="10dp"
+        android:gravity="left|top"
+        android:textSize="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview"
+        />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="输入"
+        app:layout_constraintRight_toRightOf="parent"
+        android:onClick="submit"
+        />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/sl"
+        app:layout_constraintRight_toRightOf="parent"
+        app:cardPreventCornerOverlap="false"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardElevation="5dp"
+        app:contentPadding="10dp"
+        app:cardCornerRadius="5dp"
+        app:cardMaxElevation="1dp"
+        app:cardUseCompatPadding="false"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="华健康开发环境的痕迹咖啡的痕迹咖啡的狂欢节东方航空经费的附加高考了的附加高考了的附加孤苦伶仃否决了款四大皆空乐肤洁SD卡乐肤洁看来是"
+            />
+
+    </android.support.v7.widget.CardView>
+
+    <com.paulz.shadowlayout.ShadowLayout
+        android:id="@+id/sl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardElevation="10dp"
+        app:contentPadding="10dp"
+        app:cardCornerRadius="5dp"
+        app:cardPreventCornerOverlap="false"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="华健康开发环境的痕迹咖啡的痕迹咖啡的狂欢节东方航空经费的附加高考了的附加高考了的附加孤苦伶仃否决了款四大皆空乐肤洁SD卡乐肤洁看来是"
+            />
+
+    </com.paulz.shadowlayout.ShadowLayout>
 
 </android.support.constraint.ConstraintLayout>
